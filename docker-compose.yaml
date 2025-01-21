@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    privileged: true
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8888:8888"
+      - "40000:40000"
+    extra_hosts:
+      - "localhost:host-gateway"
+    env_file:
+      - .env

@@ -1,0 +1,12 @@
+app:
+  name: "metric-client"
+  version: "0.0.1"
+  lifetime: "60s"
+
+reporter:
+  poll_interval: "2s"
+
+client:
+  interval: "10s"
+  timeout: "1s"
+  user_agent_name: "Metric Client"
