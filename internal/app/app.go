@@ -19,10 +19,10 @@ func Run(cfg config.Config) {
 	ctx, cancel := context.WithTimeout(context.Background(), cfg.App.Lifetime)
 	defer cancel()
 
-	log.Info("start metrics crawling")
+	log.Info("client start metrics crawling")
 
-	r := reporter.New(cfg)
-	c := http.NewClient(cfg)
+	r := reporter.New(cfg, log)
+	c := http.NewClient(cfg, log)
 
 	metrics := r.GetMetrics(ctx)
 	c.SendMetrics(ctx, metrics)
@@ -32,7 +32,7 @@ func Run(cfg config.Config) {
 
 	select {
 	case <-ctx.Done():
-		log.Info("stop metrics crawling", ctx.Err())
+		log.Info("client stop metrics crawling", ctx.Err())
 	case s := <-interrupt:
 		log.Info(fmt.Sprintf("client interrupt by signal %s", s.String()))
 		cancel()

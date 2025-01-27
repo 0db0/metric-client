@@ -4,24 +4,25 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"log"
 	"metric-client/config"
 	"metric-client/internal/models"
+	"metric-client/internal/pkg/logger"
 	"net/http"
 	"strconv"
 	"time"
 )
 
-const updateEndpoint = "/updates"
+const updateEndpoint = "/v0.1/updates"
 
 type Client struct {
 	interval       time.Duration
 	httpClient     *http.Client
 	serviceAddress string
 	userAgentName  string
+	log            logger.Interface
 }
 
-func NewClient(cfg config.Config) *Client {
+func NewClient(cfg config.Config, log logger.Interface) *Client {
 	return &Client{
 		interval: cfg.Client.Interval,
 		httpClient: &http.Client{
@@ -29,6 +30,7 @@ func NewClient(cfg config.Config) *Client {
 		},
 		serviceAddress: cfg.Client.Address,
 		userAgentName:  cfg.Client.UserAgentName + "/" + cfg.App.Version,
+		log:            log,
 	}
 }
 
@@ -40,34 +42,37 @@ func (c Client) SendMetrics(ctx context.Context, ch <-chan []models.Metric) {
 		select {
 		case <-ctx.Done():
 			return
-		case metric, ok := <-ch:
+		case metrics, ok := <-ch:
 			if !ok {
 				return
 			}
 
-			go func(metric []models.Metric) {
+			go func(metrics []models.Metric) {
 				<-ticker.C
 
-				req, err := c.createRequest(metric)
+				req, err := c.createRequest(metrics)
 				if err != nil {
+					c.log.Error("create request failed", err)
 					return
 				}
 
 				resp, err := c.httpClient.Do(req)
 				if err != nil {
-					log.Printf("error requesting metrics: %v", err)
+					c.log.Error("http request failed", err)
 					return
 				}
 
 				err = resp.Body.Close()
 				if err != nil {
+					c.log.Error("close response body failed", err)
 					return
 				}
 
 				if resp.StatusCode != http.StatusOK {
+					c.log.Error("http response status code invalid. Got code", resp.StatusCode)
 					return
 				}
-			}(metric)
+			}(metrics)
 		}
 	}
 }
