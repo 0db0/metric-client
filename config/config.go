@@ -11,6 +11,7 @@ type (
 		App      App      `yaml:"app"`
 		Reporter Reporter `yaml:"reporter"`
 		Client   Client   `yaml:"client"`
+		GRPCClient
 	}
 
 	App struct {
@@ -28,6 +29,10 @@ type (
 		Timeout       time.Duration `yaml:"timeout" env:"CLIENT_TIMEOUT"`
 		Address       string        `yaml:"metric_server_address" env:"METRIC_SERVER_ADDRESS"`
 		UserAgentName string        `yaml:"user_agent_name"`
+	}
+
+	GRPCClient struct {
+		Address string `yaml:"metric_server_address" env:"GRPC_METRIC_SERVER_ADDRESS"`
 	}
 )
 

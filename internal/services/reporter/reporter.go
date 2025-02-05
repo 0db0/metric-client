@@ -59,148 +59,165 @@ func collectMetrics(stats runtime.MemStats, counter *int64) []models.Metric {
 		models.Metric{
 			ID:    "Alloc",
 			MType: models.TypeGauge,
-			Value: float64(stats.Alloc),
+			Value: toFloat64Pointer(stats.Alloc),
 		},
 		models.Metric{
 			ID:    "BuckHashSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.BuckHashSys),
+			Value: toFloat64Pointer(stats.BuckHashSys),
 		},
 		models.Metric{
 			ID:    "Frees",
 			MType: models.TypeGauge,
-			Value: float64(stats.Frees),
+			Value: toFloat64Pointer(stats.Frees),
 		},
 		models.Metric{
 			ID:    "GCCPUFraction",
 			MType: models.TypeGauge,
-			Value: stats.GCCPUFraction,
+			Value: toFloat64Pointer(stats.GCCPUFraction),
 		},
 		models.Metric{
 			ID:    "GCSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.GCSys),
+			Value: toFloat64Pointer(stats.GCSys),
 		},
 		models.Metric{
 			ID:    "HeapAlloc",
 			MType: models.TypeGauge,
-			Value: float64(stats.HeapAlloc),
+			Value: toFloat64Pointer(stats.HeapAlloc),
 		},
 		models.Metric{
 			ID:    "HeapIdle",
 			MType: models.TypeGauge,
-			Value: float64(stats.HeapIdle),
+			Value: toFloat64Pointer(stats.HeapIdle),
 		},
 		models.Metric{
 			ID:    "HeapInuse",
 			MType: models.TypeGauge,
-			Value: float64(stats.HeapInuse),
+			Value: toFloat64Pointer(stats.HeapInuse),
 		},
 		models.Metric{
 			ID:    "HeapObjects",
 			MType: models.TypeGauge,
-			Value: float64(stats.HeapObjects),
+			Value: toFloat64Pointer(stats.HeapObjects),
 		},
 		models.Metric{
 			ID:    "HeapReleased",
 			MType: models.TypeGauge,
-			Value: float64(stats.HeapReleased),
+			Value: toFloat64Pointer(stats.HeapReleased),
 		},
 		models.Metric{
 			ID:    "HeapSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.HeapSys),
+			Value: toFloat64Pointer(stats.HeapSys),
 		},
 		models.Metric{
 			ID:    "LastGC",
 			MType: models.TypeGauge,
-			Value: float64(stats.LastGC),
+			Value: toFloat64Pointer(stats.LastGC),
 		},
 		models.Metric{
 			ID:    "Lookups",
 			MType: models.TypeGauge,
-			Value: float64(stats.Lookups),
+			Value: toFloat64Pointer(stats.Lookups),
 		}, models.Metric{
 			ID:    "MCacheInuse",
 			MType: models.TypeGauge,
-			Value: float64(stats.MCacheInuse),
+			Value: toFloat64Pointer(stats.MCacheInuse),
 		}, models.Metric{
 			ID:    "MCacheSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.MCacheSys),
+			Value: toFloat64Pointer(stats.MCacheSys),
 		}, models.Metric{
 			ID:    "MSpanInuse",
 			MType: models.TypeGauge,
-			Value: float64(stats.MSpanInuse),
+			Value: toFloat64Pointer(stats.MSpanInuse),
 		},
 		models.Metric{
 			ID:    "MSpanSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.MSpanSys),
+			Value: toFloat64Pointer(stats.MSpanSys),
 		},
 		models.Metric{
 			ID:    "Mallocs",
 			MType: models.TypeGauge,
-			Value: float64(stats.Mallocs),
+			Value: toFloat64Pointer(stats.Mallocs),
 		},
 		models.Metric{
 			ID:    "NextGC",
 			MType: models.TypeGauge,
-			Value: float64(stats.NextGC),
+			Value: toFloat64Pointer(stats.NextGC),
 		},
 		models.Metric{
 			ID:    "NumForcedGC",
 			MType: models.TypeGauge,
-			Value: float64(stats.NumForcedGC),
+			Value: toFloat64Pointer(stats.NumForcedGC),
 		},
 		models.Metric{
 			ID:    "NumGC",
 			MType: models.TypeGauge,
-			Value: float64(stats.NumGC),
+			Value: toFloat64Pointer(stats.NumGC),
 		},
 		models.Metric{
 			ID:    "OtherSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.OtherSys),
+			Value: toFloat64Pointer(stats.OtherSys),
 		},
 		models.Metric{
 			ID:    "PauseTotalNs",
 			MType: models.TypeGauge,
-			Value: float64(stats.PauseTotalNs),
+			Value: toFloat64Pointer(stats.PauseTotalNs),
 		},
 		models.Metric{
 			ID:    "StackInuse",
 			MType: models.TypeGauge,
-			Value: float64(stats.StackInuse),
+			Value: toFloat64Pointer(stats.StackInuse),
 		},
 		models.Metric{
 			ID:    "StackSys",
 			MType: models.TypeGauge,
-			Value: float64(stats.StackSys),
+			Value: toFloat64Pointer(stats.StackSys),
 		},
 		models.Metric{
 			ID:    "Sys",
 			MType: models.TypeGauge,
-			Value: float64(stats.Sys),
+			Value: toFloat64Pointer(stats.Sys),
 		},
 		models.Metric{
 			ID:    "TotalAlloc",
 			MType: models.TypeGauge,
-			Value: float64(stats.TotalAlloc),
+			Value: toFloat64Pointer(stats.TotalAlloc),
 		},
 		models.Metric{
 			ID:    "RandomValue",
 			MType: models.TypeGauge,
-			Value: rand.Float64(),
+			Value: toFloat64Pointer(rand.Float64()),
 		},
 	)
 
 	atomic.AddInt64(counter, 1)
+	pollCountDelta := atomic.LoadInt64(counter)
+
 	metrics = append(metrics, models.Metric{
 		ID:    "PollCount",
 		MType: models.TypeCounter,
-		Delta: atomic.LoadInt64(counter),
+		Delta: &pollCountDelta,
 	})
 
 	return metrics
+}
+
+func toFloat64Pointer(stat any) *float64 {
+	switch value := stat.(type) {
+	case float64:
+		return &value
+	case uint64:
+		f := float64(value)
+		return &f
+	case uint32:
+		f := float64(value)
+		return &f
+	}
+
+	return nil
 }
